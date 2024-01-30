@@ -393,7 +393,7 @@ const DetailedPod: React.FC<unknown> = () => {
                                 key: 'action',
                                 render: (record) => (
                                     <Link
-                                        to={`${location.pathname}?log=${record.name}`}
+                                        to={`/log/${namespace}/${name}/${record.name}`}
                                     >
                                         {<FormattedMessage id="viewLog" />}
                                     </Link>

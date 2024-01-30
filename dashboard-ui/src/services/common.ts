@@ -15,7 +15,7 @@
  */
 
 // @ts-ignore
-export const host = HOST || '';
+export const host = HOST || 'http://127.0.0.1:8088';
 
 export const PVStatusEnum = () => {
     return {

@@ -18,10 +18,12 @@ package dashboard
 
 import (
 	"context"
+	"io"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	corev1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -470,15 +472,42 @@ func (api *API) getPodLogs() gin.HandlerFunc {
 			return
 		}
 
-		logs, err := api.client.CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &corev1.PodLogOptions{
-			Container: container,
-		}).DoRaw(c)
+		upgrader := websocket.Upgrader{}
+		ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
-			c.String(500, "get pod logs of container %s: %v", container, err)
+			c.String(500, "upgrade websocket error %v", err)
+		}
+		defer ws.Close()
+		err = api.streamLogs(c, ws, pod.Namespace, pod.Name, container, 100)
+		if err != nil {
+			c.String(500, "stream logs error %v", err)
 			return
 		}
-		c.String(200, string(logs))
 	}
+}
+
+// ListPodLogs get logs by pod return stream
+func (api *API) streamLogs(ctx context.Context, ws *websocket.Conn, namespace, pod, container string, tailLines int64) error {
+	req := api.client.CoreV1().Pods(namespace).GetLogs(pod, &corev1.PodLogOptions{
+		Container:  container,
+		Timestamps: false,
+		TailLines:  &tailLines,
+		Follow:     true,
+	})
+	stream, err := req.Stream(ctx)
+	if err != nil {
+		return err
+	}
+	defer stream.Close()
+	w := &LogWriter{
+		conn:   ws,
+		stream: stream,
+	}
+	_, err = io.Copy(w, stream)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (api *API) listMountPodOf(ctx context.Context, pod *corev1.Pod) ([]*corev1.Pod, error) {

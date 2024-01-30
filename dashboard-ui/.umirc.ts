@@ -53,6 +53,10 @@ export default defineConfig({
             component: './DetailedPod',
         },
         {
+            path: '/log/:namespace/:podName/:container',
+            component: './ContainerLog',
+        },
+        {
             path: '/apppod/:namespace/:podName',
             component: './DetailedPod',
         },
