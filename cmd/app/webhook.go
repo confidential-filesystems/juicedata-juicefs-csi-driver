@@ -54,7 +54,7 @@ func NewWebhookManager(certDir string, webhookPort int, leaderElection bool,
 		CertDir:                 certDir,
 		MetricsBindAddress:      "0.0.0.0:8084",
 		LeaderElection:          leaderElection,
-		LeaderElectionID:        "webhook.juicefs.com",
+		LeaderElectionID:        "webhook.juicefs." + config.CfsName + ".com",
 		LeaderElectionNamespace: leaderElectionNamespace,
 		LeaseDuration:           &leaderElectionLeaseDuration,
 		NewCache: cache.BuilderWithOptions(cache.Options{
@@ -90,7 +90,7 @@ func NewWebhookManager(certDir string, webhookPort int, leaderElection bool,
 }
 
 func (w *WebhookManager) Start(ctx context.Context) error {
-	if err := w.registerWebhook(); err != nil {
+	if err := w.registerCfsWebhook(); err != nil {
 		klog.Errorf("Register webhook error: %v", err)
 		return err
 	}
@@ -110,6 +110,13 @@ func (w *WebhookManager) registerWebhook() error {
 	// register admission handlers
 	klog.Info("Register webhook handler")
 	handler.Register(w.mgr, w.client)
+	return nil
+}
+
+func (w *WebhookManager) registerCfsWebhook() error {
+	// register admission handlers
+	klog.Info("Register webhook handler")
+	handler.CfsRegister(w.mgr, w.client)
 	return nil
 }
 

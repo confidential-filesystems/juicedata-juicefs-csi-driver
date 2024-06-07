@@ -107,6 +107,20 @@ func (r *BaseBuilder) NewSecret() corev1.Secret {
 	return secret
 }
 
+func NewSecret(namespace, secretName string) corev1.Secret {
+	data := make(map[string]string)
+	replacer := strings.NewReplacer("¬", "`")
+	data[checkMountScriptName] = replacer.Replace(checkMountScriptContent)
+	secret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: namespace,
+			Name:      secretName,
+		},
+		StringData: data,
+	}
+	return secret
+}
+
 func SetPodAsOwner(secret *corev1.Secret, owner corev1.Pod) {
 	controller := true
 	secret.SetOwnerReferences([]metav1.OwnerReference{{

@@ -26,6 +26,8 @@ import (
 	"k8s.io/klog"
 
 	corev1 "k8s.io/api/core/v1"
+
+	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
 )
 
 var (
@@ -40,7 +42,7 @@ var (
 	Immutable          = false            // csi driver is running in an immutable environment
 	EnableNodeSelector = false            // arrange mount pod to node with node selector instead nodeName
 
-	DriverName         = "csi.juicefs.com"
+	DriverName         = "juicefs" // will be set by env or set as default
 	NodeName           = ""
 	Namespace          = ""
 	PodName            = ""
@@ -69,6 +71,11 @@ var (
 	JfsMountPath          = "/sbin/mount.juicefs"
 	DefaultClientConfPath = "/root/.juicefs"
 	ROConfPath            = "/etc/juicefs"
+
+	WorkloadRuntimeClassName = commonConfig.DefaultWorkLoadRuntimeClassName
+	ResourceServerUrl        = commonConfig.DefaultResourceServerUrl
+	WorkloadInitImage        = "docker.io/library/busybox:latest"
+	WorkloadSideCarImage     = ""
 )
 
 const (
@@ -95,12 +102,15 @@ const (
 	ControllerExpandSecretName      = "csi.storage.k8s.io/controller-expand-secret-name"
 	ControllerExpandSecretNamespace = "csi.storage.k8s.io/controller-expand-secret-namespace"
 
+	// CSI CR
+	ProvisionerCrName = "csi.storage.cfs.io/provisioner-cr-name"
+
 	// webhook
 	WebhookName          = "juicefs-admission-webhook"
 	True                 = "true"
 	False                = "false"
-	inject               = ".juicefs.com/inject"
-	injectSidecar        = ".sidecar" + inject
+	inject               = "." + CfsName + ".com/inject"
+	injectSidecar        = ".juicefs.sidecar" + inject
 	InjectSidecarDone    = "done" + injectSidecar
 	InjectSidecarDisable = "disable" + injectSidecar
 
@@ -129,6 +139,8 @@ const (
 	DefaultMountPodMemLimit   = "5Gi"
 	DefaultMountPodCpuRequest = "1000m"
 	DefaultMountPodMemRequest = "1Gi"
+
+	CfsName = "confidentialfilesystems"
 )
 
 var PodLocks [1024]sync.Mutex
@@ -150,4 +162,16 @@ func MustGetWebPort() int {
 		klog.Errorf("Fail to parse JUICEFS_CSI_WEB_PORT %s: %v", value, err)
 	}
 	return 8080
+}
+
+func GetResourceAuthExpireInSeconds() int64 {
+	authExpireIn := os.Getenv(commonConfig.EnvResourceAuthExpireIn)
+	if authExpireIn == "" {
+		return int64(commonConfig.DefaultResourceAuthExpireIn.Seconds())
+	}
+	expireIn, err := time.ParseDuration(authExpireIn)
+	if err != nil || int64(expireIn.Seconds()) < commonConfig.DefaultMinResourceAuthExpireIn {
+		expireIn = commonConfig.DefaultResourceAuthExpireIn
+	}
+	return int64(expireIn.Seconds())
 }

@@ -29,6 +29,7 @@ import (
 	"k8s.io/klog"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
 	"github.com/juicedata/juicefs-csi-driver/cmd/app"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/driver"
@@ -51,8 +52,28 @@ func parseControllerConfig() {
 	config.CacheClientConf = cacheConf
 	config.FormatInPod = formatInPod
 	config.ValidatingWebhook = validationWebhook
-	if os.Getenv("DRIVER_NAME") != "" {
-		config.DriverName = os.Getenv("DRIVER_NAME")
+	commonConfig.DriverName = config.DriverName
+	commonConfig.DriverVersion = "v0.0.1"
+	if os.Getenv(commonConfig.DriverName) != "" {
+		config.DriverName = os.Getenv(commonConfig.DriverName)
+	} else {
+		config.DriverName += commonConfig.DefaultProvisionerNameSuffix
+	}
+	if os.Getenv(commonConfig.EnvWorkloadRuntimeClassName) != "" {
+		config.WorkloadRuntimeClassName = os.Getenv(commonConfig.EnvWorkloadRuntimeClassName)
+	}
+	if os.Getenv(commonConfig.EnvResourceServerUrl) != "" {
+		config.ResourceServerUrl = os.Getenv(commonConfig.EnvResourceServerUrl)
+	}
+	if os.Getenv(commonConfig.EnvWorkloadInitImage) != "" {
+		config.WorkloadInitImage = os.Getenv(commonConfig.EnvWorkloadInitImage)
+	}
+	if os.Getenv(commonConfig.EnvWorkloadSideCarImage) != "" {
+		config.WorkloadSideCarImage = os.Getenv(commonConfig.EnvWorkloadSideCarImage)
+	}
+	if config.WorkloadSideCarImage == "" {
+		klog.Error("no workload sidecar image setting")
+		os.Exit(0)
 	}
 	// enable mount manager by default in csi controller
 	config.MountManager = true
@@ -109,7 +130,7 @@ func parseControllerConfig() {
 			klog.V(5).Infof("Can't get k8s client: %v", err)
 			os.Exit(0)
 		}
-		CSINodeDsName := "juicefs-csi-node"
+		CSINodeDsName := "juicefs-" + config.CfsName + "-csi-node"
 		if name := os.Getenv("JUICEFS_CSI_NODE_DS_NAME"); name != "" {
 			CSINodeDsName = name
 		}
@@ -194,7 +215,7 @@ func controllerRun() {
 		}()
 	}
 
-	drv, err := driver.NewDriver(endpoint, nodeID, leaderElection, leaderElectionNamespace, leaderElectionLeaseDuration, registerer)
+	drv, err := driver.NewCfsDriver(endpoint, nodeID, leaderElection, leaderElectionNamespace, leaderElectionLeaseDuration, registerer)
 	if err != nil {
 		klog.Fatalln(err)
 	}

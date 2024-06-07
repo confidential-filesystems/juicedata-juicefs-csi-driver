@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: cfs-juicefs-csi-controller
+    app.kubernetes.io/instance: cfs-juicefs-csi-driver
+    app.kubernetes.io/name: cfs-juicefs-csi-driver
+    app.kubernetes.io/version: master
+  name: cfs-juicefs-csi-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cfs-juicefs-csi-controller
+      app.kubernetes.io/instance: cfs-juicefs-csi-driver
+      app.kubernetes.io/name: cfs-juicefs-csi-driver
+      app.kubernetes.io/version: master
+  serviceName: cfs-juicefs-csi-controller
+  template:
+    metadata:
+      annotations:
+        io.containerd.cri.runtime-handler: kata-qemu-controller
+      labels:
+        app: cfs-juicefs-csi-controller
+        app.kubernetes.io/instance: cfs-juicefs-csi-driver
+        app.kubernetes.io/name: cfs-juicefs-csi-driver
+        app.kubernetes.io/version: master
+    spec:
+      runtimeClassName: kata-qemu-controller
+      containers:
+        - command:
+            - juicefs-csi-driver
+            - --endpoint=$(CSI_ENDPOINT)
+            - --logtostderr
+            - --nodeid=$(NODE_NAME)
+            - --leader-election
+            - --leader-election-namespace=$(CFS_MOUNT_NAMESPACE)
+            - --v=5
+            - --provisioner
+            - --webhook=true
+            - --webhook-cert-dir=/etc/cfs/conf/certs
+          env:
+            - name: CSI_ENDPOINT
+              value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CFS_MOUNT_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: CSI_CONTROLLER_WORKLOAD_SIDECAR_IMAGE
+              value: hub.confidentialfilesystems.com:4443/cc/juicefs:v1.1.2-d3
+            - name: CSI_CONTROLLER_WORKLOAD_INIT_IMAGE
+              value: hub.confidentialfilesystems.com:4443/cc/busybox:1.36.1
+          image: hub.confidentialfilesystems.com:4443/cc/cfs-juicefs-csi-controller:v0.0.1-d4
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          name: juicefs-csi-driver
+          ports:
+            - containerPort: 9909
+              name: healthz
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 100m
+              memory: 512Mi
+#          securityContext:
+#            capabilities:
+#              add:
+#                - SYS_ADMIN
+#            privileged: true
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+            - name: tls-certs
+              mountPath: /etc/cfs/conf/certs
+              readOnly: true
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --leader-election
+            - --v=2
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          image: hub.confidentialfilesystems.com:4443/cc/csi-resizer:v1.1.0
+          name: csi-resizer
+          volumeMounts:
+            - mountPath: /var/lib/csi/sockets/pluginproxy/
+              name: socket-dir
+        - args:
+            - --csi-address=$(ADDRESS)
+            - --health-port=$(HEALTH_PORT)
+          env:
+            - name: ADDRESS
+              value: /csi/csi.sock
+            - name: HEALTH_PORT
+              value: "9909"
+          image: hub.confidentialfilesystems.com:4443/cc/livenessprobe:v1.1.0
+          name: liveness-probe
+          volumeMounts:
+            - mountPath: /csi
+              name: socket-dir
+      priorityClassName: system-cluster-critical
+      serviceAccount: cfs-juicefs-csi-controller-sa
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+      restartPolicy: Always
+      volumes:
+        - emptyDir: {}
+          name: socket-dir
+        - name: tls-certs
+          secret:
+            secretName: cfs-juicefs-csi-webhook-tls-secret
+  volumeClaimTemplates: []

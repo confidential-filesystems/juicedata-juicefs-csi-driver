@@ -111,7 +111,7 @@ func (s *SidecarMutate) mutate(ctx context.Context, pod *corev1.Pod, pair util.P
 	}
 
 	// gen mount pod
-	mountPod := r.NewMountSidecar()
+	mountPod := r.NewMountSidecar(&pair)
 	podStr, _ := json.Marshal(mountPod)
 	klog.V(6).Infof("mount pod: %v\n", string(podStr))
 

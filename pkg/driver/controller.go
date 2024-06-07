@@ -332,3 +332,7 @@ func (d *controllerService) ControllerUnpublishVolume(ctx context.Context, req *
 func (d *controllerService) ControllerGetVolume(ctx context.Context, request *csi.ControllerGetVolumeRequest) (*csi.ControllerGetVolumeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "")
 }
+
+func (*controllerService) ControllerModifyVolume(ctx context.Context, req *csi.ControllerModifyVolumeRequest) (*csi.ControllerModifyVolumeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "")
+}

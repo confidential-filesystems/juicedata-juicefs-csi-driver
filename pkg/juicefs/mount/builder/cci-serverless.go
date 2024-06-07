@@ -25,6 +25,7 @@ import (
 	utilpointer "k8s.io/utils/pointer"
 
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
+	"github.com/juicedata/juicefs-csi-driver/pkg/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util/security"
 )
 
@@ -60,7 +61,7 @@ func NewCCIBuilder(setting *config.JfsSetting, capacity int64, app corev1.Pod, p
 // 3. no propagationBidirectional
 // 4. with env JFS_NO_UMOUNT=1
 // 5. annotations for CCI
-func (r *CCIBuilder) NewMountSidecar() *corev1.Pod {
+func (r *CCIBuilder) NewMountSidecar(_ *util.PVPair) *corev1.Pod {
 	pod := r.genCommonJuicePod(r.genNonPrivilegedContainer)
 
 	// check mount & create subpath & set quota

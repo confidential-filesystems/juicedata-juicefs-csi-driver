@@ -24,6 +24,7 @@ import (
 	"strconv"
 	"strings"
 
+	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
@@ -115,6 +116,47 @@ func (r *BaseBuilder) genCommonJuicePod(cnGen func() corev1.Container) *corev1.P
 		}
 	}
 	return pod
+}
+
+func (r *BaseBuilder) genCommonCfsPod(cnGen func() corev1.Container) *corev1.Pod {
+	pod := r.genPodTemplate(cnGen)
+	pod.Spec.Containers[0].Resources = r.jfsSetting.Resources
+	cmdTemplate := "umount %s -l && rmdir %s"
+	if commonConfig.CfsTest {
+		cmdTemplate = "echo \"" + cmdTemplate + "\""
+	}
+	pod.Spec.Containers[0].Lifecycle = &corev1.Lifecycle{
+		PreStop: &corev1.Handler{
+			Exec: &corev1.ExecAction{Command: []string{"sh", "-c", fmt.Sprintf(cmdTemplate, r.jfsSetting.MountPath, r.jfsSetting.MountPath)}},
+		},
+	}
+	pod.Spec.Containers[0].Ports = []corev1.ContainerPort{
+		{Name: "metrics", ContainerPort: r.genMetricsPort()},
+	}
+	return pod
+}
+
+func (r *BaseBuilder) genCfsMountCommand() string {
+	cmd := ""
+	options := r.jfsSetting.Options
+	klog.V(5).Infof("ceMount: mount %v at %v", util.StripPasswd(r.jfsSetting.Source), r.jfsSetting.MountPath)
+	mountArgs := []string{config.CeMountPath, "\"${metaurl}\"", security.EscapeBashStr(r.jfsSetting.MountPath)}
+	if !util.ContainsPrefix(options, "metrics=") {
+		if r.jfsSetting.Attr.HostNetwork {
+			// Pick up a random (useable) port for hostNetwork MountPods.
+			options = append(options, "metrics=0.0.0.0:0")
+		} else {
+			options = append(options, "metrics=0.0.0.0:9567")
+		}
+	}
+	options = append(options, "encrypt-root-key=/etc/cfs/conf/keys/fsrk", "cache-dir=/dev/shm", "backup-meta=0")
+	mountArgs = append(mountArgs, "-o", security.EscapeBashStr(strings.Join(options, ",")))
+	cmd = strings.Join(mountArgs, " ")
+	if commonConfig.CfsTest {
+		cmd = "echo \"" + cmd + "\" && while true; do echo $(date -u) >> /tmp/out.txt; sleep 5; done"
+	}
+	klog.V(5).Infof("webhook mount command: %s", cmd)
+	return util.QuoteForShell(cmd)
 }
 
 // genMountCommand generates mount command

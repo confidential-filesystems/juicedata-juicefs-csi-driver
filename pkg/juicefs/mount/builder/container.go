@@ -26,6 +26,7 @@ import (
 	utilpointer "k8s.io/utils/pointer"
 
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
+	"github.com/juicedata/juicefs-csi-driver/pkg/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util/security"
 )
 
@@ -46,7 +47,7 @@ func NewContainerBuilder(setting *config.JfsSetting, capacity int64) SidecarInte
 
 // NewMountSidecar generates a pod with a juicefs sidecar
 // exactly the same spec as Mount Pod
-func (r *ContainerBuilder) NewMountSidecar() *corev1.Pod {
+func (r *ContainerBuilder) NewMountSidecar(_ *util.PVPair) *corev1.Pod {
 	pod := r.NewMountPod("")
 	// no annotation and label for sidecar
 	pod.Annotations = map[string]string{}

@@ -27,6 +27,7 @@ import (
 	"k8s.io/klog"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
 	"github.com/juicedata/juicefs-csi-driver/cmd/app"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/controller"
@@ -44,8 +45,10 @@ func parseNodeConfig() {
 		return
 	}
 	config.FormatInPod = formatInPod
-	if os.Getenv("DRIVER_NAME") != "" {
-		config.DriverName = os.Getenv("DRIVER_NAME")
+	if os.Getenv(commonConfig.EnvDriverName) != "" {
+		config.DriverName = os.Getenv(commonConfig.EnvDriverName)
+	} else {
+		config.DriverName += commonConfig.DefaultProvisionerNameSuffix
 	}
 
 	if jfsImmutable := os.Getenv("JUICEFS_IMMUTABLE"); jfsImmutable != "" {

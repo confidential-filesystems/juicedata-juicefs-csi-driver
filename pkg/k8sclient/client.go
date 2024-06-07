@@ -40,6 +40,7 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	restclient "k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/tools/remotecommand"
 	"k8s.io/klog"
 )
@@ -79,7 +80,11 @@ type K8sClient struct {
 func NewClient() (*K8sClient, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		return nil, err
+		cfg, err := clientcmd.BuildConfigFromFlags("", os.Getenv("KUBE_CONFIG"))
+		if err != nil {
+			return nil, err
+		}
+		config = cfg
 	}
 	if config == nil {
 		return nil, status.Error(codes.NotFound, "Can't get kube InClusterConfig")

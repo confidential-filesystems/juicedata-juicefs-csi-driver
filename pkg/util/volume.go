@@ -30,8 +30,9 @@ import (
 )
 
 type PVPair struct {
-	PV  *corev1.PersistentVolume
-	PVC *corev1.PersistentVolumeClaim
+	VolumeName string
+	PV         *corev1.PersistentVolume
+	PVC        *corev1.PersistentVolumeClaim
 }
 
 // GetVolumes get juicefs pv & pvc from pod
@@ -96,7 +97,7 @@ func getVol(ctx context.Context, client *k8sclient.K8sClient, pod *corev1.Pod, n
 			// if PV is JuiceFS PV
 			if pv.Spec.CSI != nil && pv.Spec.CSI.Driver == config.DriverName {
 				used = true
-				pvPairGot = append(pvPairGot, PVPair{PV: pv, PVC: pvc})
+				pvPairGot = append(pvPairGot, PVPair{PV: pv, PVC: pvc, VolumeName: volume.Name})
 			}
 		}
 	}

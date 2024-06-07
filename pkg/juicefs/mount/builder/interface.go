@@ -16,10 +16,13 @@
 
 package builder
 
-import corev1 "k8s.io/api/core/v1"
+import (
+	"github.com/juicedata/juicefs-csi-driver/pkg/util"
+	corev1 "k8s.io/api/core/v1"
+)
 
 type SidecarInterface interface {
-	NewMountSidecar() *corev1.Pod
+	NewMountSidecar(pair *util.PVPair) *corev1.Pod
 	NewSecret() corev1.Secret
 	OverwriteVolumes(volume *corev1.Volume, mountPath string)
 	OverwriteVolumeMounts(mount *corev1.VolumeMount)

@@ -392,16 +392,20 @@ func (j *juicefs) Settings(ctx context.Context, volumeID string, secrets, volCtx
 		jfsSetting.UUID = secrets["name"]
 		jfsSetting.InitConfig = secrets["initconfig"]
 	} else {
-		noUpdate := false
-		if secrets["storage"] == "" || secrets["bucket"] == "" {
-			klog.V(5).Infof("JfsMount: storage or bucket is empty, format --no-update.")
-			noUpdate = true
+		if secrets == nil {
+			klog.V(5).Infof("CfsMount: no need format for cfs.")
+		} else {
+			noUpdate := false
+			if secrets["storage"] == "" || secrets["bucket"] == "" {
+				klog.V(5).Infof("JfsMount: storage or bucket is empty, format --no-update.")
+				noUpdate = true
+			}
+			res, err := j.ceFormat(ctx, secrets, noUpdate, jfsSetting)
+			if err != nil {
+				return nil, fmt.Errorf("juicefs format error: %v", err)
+			}
+			jfsSetting.FormatCmd = res
 		}
-		res, err := j.ceFormat(ctx, secrets, noUpdate, jfsSetting)
-		if err != nil {
-			return nil, fmt.Errorf("juicefs format error: %v", err)
-		}
-		jfsSetting.FormatCmd = res
 	}
 	return jfsSetting, nil
 }

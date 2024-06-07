@@ -20,3 +20,7 @@ cov2.out
 yalc.lock
 .ropeproject
 dist/
+build/
+
+deploy/cfs/local
+docker/cfs/build

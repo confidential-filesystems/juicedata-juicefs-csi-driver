@@ -135,23 +135,25 @@ func ParseSetting(secrets, volCtx map[string]string, options []string, usePod bo
 	if options != nil {
 		jfsSetting.Options = options
 	}
+	var err error
 	if secrets == nil {
-		return &jfsSetting, nil
-	}
+		jfsSetting.IsCe = true // cfs no secret, always as ce
+		//return &jfsSetting, nil
+	} else {
+		secretStr, err := json.Marshal(secrets)
+		if err != nil {
+			return nil, err
+		}
+		if err := parseYamlOrJson(string(secretStr), &jfsSetting); err != nil {
+			return nil, err
+		}
 
-	secretStr, err := json.Marshal(secrets)
-	if err != nil {
-		return nil, err
+		if secrets["name"] == "" {
+			return nil, status.Errorf(codes.InvalidArgument, "Empty name")
+		}
+		jfsSetting.Name = secrets["name"]
+		jfsSetting.Storage = secrets["storage"]
 	}
-	if err := parseYamlOrJson(string(secretStr), &jfsSetting); err != nil {
-		return nil, err
-	}
-
-	if secrets["name"] == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "Empty name")
-	}
-	jfsSetting.Name = secrets["name"]
-	jfsSetting.Storage = secrets["storage"]
 	jfsSetting.Envs = make(map[string]string)
 	jfsSetting.Configs = make(map[string]string)
 	jfsSetting.ClientConfPath = DefaultClientConfPath

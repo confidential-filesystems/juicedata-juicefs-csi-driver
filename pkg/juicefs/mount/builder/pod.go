@@ -75,6 +75,25 @@ func (r *PodBuilder) NewMountPod(podName string) *corev1.Pod {
 	return pod
 }
 
+// NewCfsMountPod generates a pod with cfs client
+func (r *PodBuilder) NewCfsMountPod(podName string) *corev1.Pod {
+	pod := r.genCommonCfsPod(r.genCommonContainer)
+
+	pod.Name = podName
+	mountCmd := r.genMountCommand()
+	cmd := mountCmd
+	initCmd := r.genInitCommand()
+	if initCmd != "" {
+		cmd = strings.Join([]string{initCmd, mountCmd}, "\n")
+	}
+	pod.Spec.Containers[0].Command = []string{"sh", "-c", cmd}
+	pod.Spec.Containers[0].Env = []corev1.EnvVar{{
+		Name:  "JFS_FOREGROUND",
+		Value: "1",
+	}}
+	return pod
+}
+
 // genCommonContainer: generate common privileged container
 func (r *PodBuilder) genCommonContainer() corev1.Container {
 	isPrivileged := true

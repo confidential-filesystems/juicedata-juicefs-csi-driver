@@ -26,6 +26,7 @@ import (
 	utilpointer "k8s.io/utils/pointer"
 
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
+	"github.com/juicedata/juicefs-csi-driver/pkg/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util/security"
 )
 
@@ -48,7 +49,7 @@ func NewServerlessBuilder(setting *config.JfsSetting, capacity int64) SidecarInt
 // 1. no hostpath except mount point (the serverless cluster must have this permission.)
 // 2. with privileged container (the serverless cluster must have this permission.)
 // 3. no initContainer
-func (r *ServerlessBuilder) NewMountSidecar() *corev1.Pod {
+func (r *ServerlessBuilder) NewMountSidecar(_ *util.PVPair) *corev1.Pod {
 	pod := r.genCommonJuicePod(r.genCommonContainer)
 
 	// no annotation and label for sidecar
