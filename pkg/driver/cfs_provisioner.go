@@ -14,11 +14,13 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	admissionv1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
 	provisioncontroller "sigs.k8s.io/sig-storage-lib-external-provisioner/v6/controller"
 
+	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	k8s "github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util"
@@ -91,6 +93,10 @@ func (j *cfsProvisionerService) Provision(ctx context.Context, options provision
 		}
 	}
 
+	if err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, options.PVC, admissionv1.Create, config.ResourceServerUrl); err != nil {
+		return nil, provisioncontroller.ProvisioningFinished, fmt.Errorf("no permission to %s: %s", admissionv1.Create, err)
+	}
+
 	mountOptions := make([]string, 0)
 	for _, mo := range options.StorageClass.MountOptions {
 		parsedStr := pvMeta.StringParser(mo)
@@ -141,6 +147,15 @@ func (j *cfsProvisionerService) Provision(ctx context.Context, options provision
 
 func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.PersistentVolume) error {
 	klog.V(6).Infof("Provisioner Delete: Volume %v", volume)
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      volume.Spec.ClaimRef.Name,
+			Namespace: volume.Spec.ClaimRef.Namespace,
+		},
+	}
+	if err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, config.ResourceServerUrl); err != nil {
+		return fmt.Errorf("no permission to %s: %s", admissionv1.Delete, err)
+	}
 	// If it exists and has a `delete` value, delete the directory.
 	// If it exists and has a `retain` value, safe the directory.
 	policy := volume.Spec.PersistentVolumeReclaimPolicy

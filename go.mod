@@ -392,4 +392,6 @@ replace confidentialfilesystems.com/cc/keyprovider => ../filesystem-toolchain/im
 
 replace github.com/containers/skopeo => ../filesystem-toolchain/image/skopeo/skopeo
 
+replace github.com/confidential-filesystems/csi-driver-common => ../csi-driver-common
+
 //go/pkg/mod/github.com/sigstore/cosign/v2@v2.2.3/cmd/cosign/cli/copy/copy.go need to update

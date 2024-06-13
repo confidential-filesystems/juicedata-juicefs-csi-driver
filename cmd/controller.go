@@ -75,6 +75,11 @@ func parseControllerConfig() {
 		klog.Error("no workload sidecar image setting")
 		os.Exit(0)
 	}
+	config.PodName = os.Getenv("POD_NAME")
+	if config.PodName == "" {
+		klog.Fatalln("Pod name can't be null.")
+		os.Exit(0)
+	}
 	// enable mount manager by default in csi controller
 	config.MountManager = true
 	if process {

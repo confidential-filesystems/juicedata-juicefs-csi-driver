@@ -311,7 +311,8 @@ func (d *controllerService) ControllerExpandVolume(ctx context.Context, req *csi
 
 	err = d.juicefs.SetQuota(ctx, req.GetSecrets(), settings, path.Join(subdir, quotaPath), capacity)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "set quota: %v", err)
+		// TODO
+		//return nil, status.Errorf(codes.Internal, "set quota: %v", err)
 	}
 	return &csi.ControllerExpandVolumeResponse{
 		CapacityBytes:         newSize,
