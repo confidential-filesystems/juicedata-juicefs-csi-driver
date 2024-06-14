@@ -145,7 +145,7 @@ func (s *CfsSidecarMutate) injectEnvs(ctx context.Context, out *corev1.Pod, pair
 		return err
 	}
 	crName := storageClass.Parameters[config.ProvisionerCrName]
-	cr, err := s.Client.GetCr(ctx, crName)
+	cr, err := commonUtil.GetCfSpec(ctx, s.Client, crName)
 	if err != nil {
 		klog.Errorf("get cr %s err: %v", crName, err)
 		return err

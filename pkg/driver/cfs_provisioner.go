@@ -6,7 +6,6 @@ package driver
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -93,7 +92,7 @@ func (j *cfsProvisionerService) Provision(ctx context.Context, options provision
 		}
 	}
 
-	if err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, options.PVC, admissionv1.Create, config.ResourceServerUrl); err != nil {
+	if _, _, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, options.PVC, admissionv1.Create, config.ResourceServerUrl); err != nil {
 		return nil, provisioncontroller.ProvisioningFinished, fmt.Errorf("no permission to %s: %s", admissionv1.Create, err)
 	}
 
@@ -153,7 +152,8 @@ func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.Persi
 			Namespace: volume.Spec.ClaimRef.Namespace,
 		},
 	}
-	if err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, config.ResourceServerUrl); err != nil {
+	addr, cred, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, config.ResourceServerUrl)
+	if err != nil {
 		return fmt.Errorf("no permission to %s: %s", admissionv1.Delete, err)
 	}
 	// If it exists and has a `delete` value, delete the directory.
@@ -173,40 +173,17 @@ func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.Persi
 		klog.Infof("Provisioner: there are other pvs using the same subPath retained, volume %s should not be deleted, return.", volume.Name)
 		return nil
 	}
-	if config.Webhook {
-		// TODO
-		klog.Warningf("Provisioner: currently do not support delete Volume %s, return.", volume.Name)
-		return nil
-	}
 	klog.V(6).Infof("Provisioner: there are no other pvs using the same subPath, volume %s can be deleted.", volume.Name)
-	subPath := volume.Spec.PersistentVolumeSource.CSI.VolumeAttributes["subPath"]
-	secretName, secretNamespace := volume.Spec.CSI.NodePublishSecretRef.Name, volume.Spec.CSI.NodePublishSecretRef.Namespace
-	secret, err := j.K8sClient.GetSecret(ctx, secretName, secretNamespace)
+	klog.V(5).Infof("Provisioner Delete: Deleting volume subpath %q", pvc.Name)
+
+	cfsSpecName := volume.Spec.CSI.VolumeAttributes[config.ProvisionerCrName]
+	cfspec, err := commonUtil.GetCfSpec(ctx, j.K8sClient, cfsSpecName)
 	if err != nil {
-		klog.Errorf("Provisioner: Get Secret error: %v", err)
-		return err
+		return fmt.Errorf("fail to get cfspec %s, err: %s", cfsSpecName, err)
 	}
-	secretData := make(map[string]string)
-	for k, v := range secret.Data {
-		secretData[k] = string(v)
+	if err := util.OperateFs(ctx, cfspec, addr, cred, admissionv1.Delete); err != nil {
+		return fmt.Errorf("unable to provision delete volume: fail to delete fs %s with subpath %s, err: %s", cfsSpecName, pvc.Name, err)
 	}
 
-	klog.V(5).Infof("Provisioner Delete: Deleting volume subpath %q", subPath)
-	if err := j.juicefs.JfsDeleteVol(ctx, volume.Name, subPath, secretData, volume.Spec.CSI.VolumeAttributes, volume.Spec.MountOptions); err != nil {
-		klog.Errorf("provisioner: delete vol error %v", err)
-		return errors.New("unable to provision delete volume: " + err.Error())
-	}
-
-	if volume.Spec.CSI.VolumeAttributes["secretFinalizer"] == "true" {
-		shouldRemoveFinalizer, err := util.CheckForSecretFinalizer(ctx, j.K8sClient, volume)
-		if err != nil {
-			klog.Errorf("Provisioner: CheckForSecretFinalizer error: %v", err)
-			return err
-		}
-		if shouldRemoveFinalizer {
-			klog.V(6).Infof("Provisioner: Remove Finalizer on %s/%s", secretNamespace, secretName)
-			util.RemoveSecretFinalizer(ctx, j.K8sClient, secret, config.Finalizer)
-		}
-	}
 	return nil
 }

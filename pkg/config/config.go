@@ -74,6 +74,7 @@ var (
 
 	WorkloadRuntimeClassName = commonConfig.DefaultWorkLoadRuntimeClassName
 	ResourceServerUrl        = commonConfig.DefaultResourceServerUrl
+	FSManagerPort            = commonConfig.DefaultFsManagerPort
 	WorkloadInitImage        = "docker.io/library/busybox:latest"
 	WorkloadSideCarImage     = ""
 )

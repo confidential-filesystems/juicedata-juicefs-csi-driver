@@ -65,6 +65,12 @@ func parseControllerConfig() {
 	if os.Getenv(commonConfig.EnvResourceServerUrl) != "" {
 		config.ResourceServerUrl = os.Getenv(commonConfig.EnvResourceServerUrl)
 	}
+	if os.Getenv(commonConfig.EnvFsManagerPort) != "" {
+		port, err := strconv.Atoi(os.Getenv(commonConfig.EnvFsManagerPort))
+		if err == nil {
+			config.FSManagerPort = port
+		}
+	}
 	if os.Getenv(commonConfig.EnvWorkloadInitImage) != "" {
 		config.WorkloadInitImage = os.Getenv(commonConfig.EnvWorkloadInitImage)
 	}
