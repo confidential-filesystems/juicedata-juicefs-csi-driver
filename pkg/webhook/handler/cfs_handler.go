@@ -70,7 +70,7 @@ func (s *CfsSidecarHandler) Handle(ctx context.Context, request admission.Reques
 	}
 
 	// check if pod use JuiceFS Volume
-	used, pair, err := util.GetVolumes(ctx, s.Client, pod)
+	used, pair, err := commonUtil.GetVolumes(ctx, s.Client, pod, config.DriverName, config.ResourceServerUrl, false)
 	if err != nil {
 		klog.Errorf("[CfsSidecarHandler] get pv from pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
 		err = nil // disable the event
@@ -98,6 +98,7 @@ func (s *CfsSidecarHandler) Handle(ctx context.Context, request admission.Reques
 	}
 	klog.V(6).Infof("[CfsSidecarHandler] mutated pod: %s", string(marshaledPod))
 	resp := admission.PatchResponseFromRaw(raw, marshaledPod)
+	klog.Infof("[CfsSidecarHandler] injected cfs sidecar in pod [%s] namespace [%s].", pod.Name, pod.Namespace)
 	return resp
 }
 

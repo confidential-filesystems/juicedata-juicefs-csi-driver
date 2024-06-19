@@ -94,7 +94,7 @@ func (d *cfsControllerService) ControllerExpandVolume(ctx context.Context, req *
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("fail to get pvc %s namespace %s, err: %s", pvcName, namespace, err))
 	}
-	addr, cred, err := commonUtil.CheckPvcCredential(ctx, d.k8sClient, pvc, admissionv1.Update, config.ResourceServerUrl)
+	addr, cred, err := commonUtil.CheckPvcCredential(ctx, d.k8sClient, pvc, admissionv1.Update, "", config.ResourceServerUrl)
 	if err != nil {
 		return nil, status.Error(codes.PermissionDenied, fmt.Sprintf("no permission to %s: %s", admissionv1.Update, err))
 	}

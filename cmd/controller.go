@@ -54,6 +54,7 @@ func parseControllerConfig() {
 	config.ValidatingWebhook = validationWebhook
 	commonConfig.DriverName = config.DriverName
 	commonConfig.DriverVersion = "v0.0.1"
+	commonConfig.StorageClassSuffix = "-cfs-oss-sc"
 	if os.Getenv(commonConfig.DriverName) != "" {
 		config.DriverName = os.Getenv(commonConfig.DriverName)
 	} else {

@@ -25,17 +25,18 @@ import (
 
 type CfsSidecarMutate struct {
 	SidecarMutate
+	Pair []commonUtil.PVPair
 }
 
 var _ Mutate = &CfsSidecarMutate{}
 
-func NewCfsSidecarMutate(client *k8sclient.K8sClient, jfs juicefs.Interface, pair []util.PVPair) Mutate {
+func NewCfsSidecarMutate(client *k8sclient.K8sClient, jfs juicefs.Interface, pair []commonUtil.PVPair) Mutate {
 	return &CfsSidecarMutate{
 		SidecarMutate: SidecarMutate{
 			Client:  client,
 			juicefs: jfs,
-			Pair:    pair,
 		},
+		Pair: pair,
 	}
 }
 
@@ -48,13 +49,22 @@ func (s *CfsSidecarMutate) Mutate(ctx context.Context, pod *corev1.Pod) (out *co
 		sideCarContainerNames []string
 		sideCarContainerName  = ""
 	)
-	signer, ivps, ikekKids, err = commonUtil.CheckContainerImages(ctx, s.Client, out, config.ResourceServerUrl)
+	// find expected signer
+	for _, pair := range s.Pair {
+		if signer == "" && signer != pair.FsOwner {
+			signer = pair.FsOwner
+		} else if signer != pair.FsOwner {
+			klog.Errorf("not allowed different user's filesystems currently [%s, %s]. pod %s namespace %s", signer, pair.FsOwner, pod.Name, pod.Namespace)
+			return nil, err
+		}
+	}
+	ivps, ikekKids, err = commonUtil.CheckContainerImages(ctx, s.Client, out, signer, config.ResourceServerUrl)
 	if err != nil {
 		klog.Errorf("check container images of pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
 		return nil, err
 	}
 	for i, pair := range s.Pair {
-		out, sideCarContainerName, err = s.mutate(ctx, out, pair, i)
+		out, sideCarContainerName, err = s.mutate(ctx, out, util.PVPair{PV: pair.PV, PVC: pair.PVC, VolumeName: pair.VolumeName}, i)
 		if err != nil {
 			klog.Errorf("mutate pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
 			return

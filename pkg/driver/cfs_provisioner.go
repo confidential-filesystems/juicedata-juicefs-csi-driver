@@ -92,7 +92,7 @@ func (j *cfsProvisionerService) Provision(ctx context.Context, options provision
 		}
 	}
 
-	if _, _, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, options.PVC, admissionv1.Create, config.ResourceServerUrl); err != nil {
+	if _, _, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, options.PVC, admissionv1.Create, "", config.ResourceServerUrl); err != nil {
 		return nil, provisioncontroller.ProvisioningFinished, fmt.Errorf("no permission to %s: %s", admissionv1.Create, err)
 	}
 
@@ -152,7 +152,7 @@ func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.Persi
 			Namespace: volume.Spec.ClaimRef.Namespace,
 		},
 	}
-	addr, cred, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, config.ResourceServerUrl)
+	addr, cred, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, "", config.ResourceServerUrl)
 	if err != nil {
 		return fmt.Errorf("no permission to %s: %s", admissionv1.Delete, err)
 	}
