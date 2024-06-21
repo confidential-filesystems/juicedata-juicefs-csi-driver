@@ -8,19 +8,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/klog"
 	"os"
 	"path/filepath"
 	"strings"
 
 	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
 	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	"github.com/confidential-filesystems/filesystem-toolchain/resource"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/juicefs"
 	"github.com/juicedata/juicefs-csi-driver/pkg/juicefs/mount/builder"
 	"github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/klog"
 )
 
 type CfsSidecarMutate struct {
@@ -48,13 +49,14 @@ func (s *CfsSidecarMutate) Mutate(ctx context.Context, pod *corev1.Pod) (out *co
 		ikekKids              []string
 		sideCarContainerNames []string
 		sideCarContainerName  = ""
+		sideCarFses           []*resource.Filesystem
 	)
 	// find expected signer
 	for _, pair := range s.Pair {
-		if signer == "" && signer != pair.FsOwner {
-			signer = pair.FsOwner
-		} else if signer != pair.FsOwner {
-			klog.Errorf("not allowed different user's filesystems currently [%s, %s]. pod %s namespace %s", signer, pair.FsOwner, pod.Name, pod.Namespace)
+		if signer == "" && signer != pair.Filesystem.OwnerAddress {
+			signer = pair.Filesystem.OwnerAddress
+		} else if signer != pair.Filesystem.OwnerAddress {
+			klog.Errorf("not allowed different user's filesystems currently [%s, %s]. pod %s namespace %s", signer, pair.Filesystem.OwnerAddress, pod.Name, pod.Namespace)
 			return nil, err
 		}
 	}
@@ -70,10 +72,11 @@ func (s *CfsSidecarMutate) Mutate(ctx context.Context, pod *corev1.Pod) (out *co
 			return
 		}
 		sideCarContainerNames = append(sideCarContainerNames, sideCarContainerName)
+		sideCarFses = append(sideCarFses, &pair.Filesystem)
 	}
 	commonUtil.InjectRuntimeHandlerAnnotation(out, config.WorkloadRuntimeClassName)
 	commonUtil.InjectRuntimeClass(out, config.WorkloadRuntimeClassName)
-	if err := commonUtil.InjectInitContainer(ctx, out, signer, ivps, ikekKids, sideCarContainerNames,
+	if err := commonUtil.InjectInitContainer(ctx, out, ivps, ikekKids, sideCarContainerNames, sideCarFses, true,
 		config.WorkloadInitImage, config.ResourceServerUrl, config.GetResourceAuthExpireInSeconds()); err != nil {
 		klog.Errorf("inject init container to pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
 		return nil, err
@@ -166,7 +169,7 @@ func (s *CfsSidecarMutate) injectEnvs(ctx context.Context, out *corev1.Pod, pair
 	}
 	out.Spec.Containers[0].Env = append(out.Spec.Containers[0].Env, corev1.EnvVar{
 		Name:  "metaurl",
-		Value: fmt.Sprintf("rediss://%s/1?tls-cert-file=/etc/cfs/conf/certs/client.cert&tls-key-file=/etc/cfs/conf/certs/client.key&tls-ca-cert-file=/etc/cfs/conf/certs/ca", metadataUrl),
+		Value: fmt.Sprintf("rediss://%s/1?tls-cert-file=/etc/cfs/conf/certs/client.cert&tls-key-file=/etc/cfs/conf/certs/client.key&tls-ca-cert-file=/etc/cfs/conf/certs/ca&tls-server-name=%s", metadataUrl, crName),
 	})
 	return nil
 }

@@ -3,14 +3,13 @@ module github.com/juicedata/juicefs-csi-driver
 require (
 	github.com/agiledragon/gomonkey/v2 v2.9.0
 	github.com/confidential-filesystems/csi-driver-common v0.0.0-20240607095517-2fa5b124bfa3
-	github.com/confidential-filesystems/filesystem-toolchain v1.0.0
+	github.com/confidential-filesystems/filesystem-toolchain v0.0.1
 	github.com/container-storage-interface/spec v1.9.0
-	github.com/docker/cli v26.1.3+incompatible
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-logr/logr v1.4.1
+	github.com/go-resty/resty/v2 v2.12.0
 	github.com/golang/mock v1.6.0
-	github.com/google/uuid v1.6.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.30.0
 	github.com/pkg/errors v0.9.1
@@ -31,7 +30,6 @@ require (
 require (
 	cloud.google.com/go/compute v1.23.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	confidentialfilesystems.com/cc/keyprovider v0.0.1 // indirect
 	cuelabs.dev/go/oci/ociregistry v0.0.0-20231103182354-93e78c079a13 // indirect
 	cuelang.org/go v0.7.0 // indirect
 	dario.cat/mergo v1.0.0 // indirect
@@ -102,6 +100,7 @@ require (
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
+	github.com/confidential-filesystems/containers-skopeo-keyprovider v0.0.0-20240620094644-627f05ac867d // indirect
 	github.com/containerd/cgroups/v3 v3.0.2 // indirect
 	github.com/containerd/containerd v1.7.12 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.15.1 // indirect
@@ -120,6 +119,7 @@ require (
 	github.com/digitorus/timestamp v0.0.0-20231217203849-220c5c2851b7 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
+	github.com/docker/cli v26.1.3+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker v24.0.7+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.8.0 // indirect
@@ -150,7 +150,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.16.0 // indirect
-	github.com/go-resty/resty/v2 v2.12.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -166,6 +165,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gnostic v0.5.5 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
@@ -388,9 +388,7 @@ replace k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20211115234752-e816edb
 
 replace github.com/confidential-filesystems/filesystem-toolchain => ../filesystem-toolchain
 
-replace confidentialfilesystems.com/cc/keyprovider => ../filesystem-toolchain/image/keyprovider
-
-replace github.com/containers/skopeo => ../filesystem-toolchain/image/skopeo/skopeo
+replace github.com/containers/skopeo v1.14.2 => github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087
 
 replace github.com/confidential-filesystems/csi-driver-common => ../csi-driver-common
 

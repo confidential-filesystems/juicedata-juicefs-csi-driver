@@ -344,8 +344,10 @@ github.com/codahale/rfc6979 v0.0.0-20141003034818-6a90f24967eb h1:EDmT6Q9Zs+SbUo
 github.com/codahale/rfc6979 v0.0.0-20141003034818-6a90f24967eb/go.mod h1:ZjrT6AXHbDs86ZSdt/osfBi5qfexBrKUdONk989Wnk4=
 github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be h1:J5BL2kskAlV9ckgEsNQXscjIaLiOYiZ75d4e94E6dcQ=
 github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be/go.mod h1:mk5IQ+Y0ZeO87b858TlA645sVcEcbiX6YqP98kt+7+w=
-github.com/confidential-filesystems/csi-driver-common v0.0.0-20240607095517-2fa5b124bfa3 h1:ZwPowIIUoAOknP1QKJXtdSr60Va57EpCkRxdryCxTjI=
-github.com/confidential-filesystems/csi-driver-common v0.0.0-20240607095517-2fa5b124bfa3/go.mod h1:dOS2h3MotYTMLaLSLY+UuUhFuHTM46uwrUl+g9Fzvog=
+github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087 h1:P5MmoM3VzjgHK6E5Xu463baO0L6RbkbCjB9LDSP1Huo=
+github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087/go.mod h1:CnnAB6RUXmL0BWpFIQUcGYDPCSAH9XWkmttXg17Ma7U=
+github.com/confidential-filesystems/containers-skopeo-keyprovider v0.0.0-20240620094644-627f05ac867d h1:VL3YTpA4vrQQFKhZOHg3Gyu21Umfq3xyJ/EfhkIRHB4=
+github.com/confidential-filesystems/containers-skopeo-keyprovider v0.0.0-20240620094644-627f05ac867d/go.mod h1:WG92RHvnp/HZNFtHOwUerl6Mcra9c9qtZH8m8/GWCk4=
 github.com/consensys/bavard v0.1.8-0.20210406032232-f3452dc9b572/go.mod h1:Bpd0/3mZuaj6Sj+PqrmIquiOKy397AKGThQPaGzNXAQ=
 github.com/consensys/gnark-crypto v0.4.1-0.20210426202927-39ac3d4b3f1f/go.mod h1:815PAHg3wvysy0SyIqanF8gZ0Y1wjk/hrDHD/iT88+Q=
 github.com/container-storage-interface/spec v1.9.0 h1:zKtX4STsq31Knz3gciCYCi1SXtO2HJDecIjDVboYavY=
