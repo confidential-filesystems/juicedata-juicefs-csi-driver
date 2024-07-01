@@ -17,6 +17,14 @@ webhooks:
     namespaceSelector:
       matchLabels:
         confidentialfilesystems.com/enable-injection: "true"
+    objectSelector:
+      matchExpressions:
+        - key: disable.sidecar.juicefs.confidentialfilesystems.com/inject
+          operator: NotIn
+          values: [ "true" ]
+        - key: disable.sidecar.csi.confidentialfilesystems.com/inject
+          operator: NotIn
+          values: [ "true" ]
     rules:
       - apiGroups:
           - ""

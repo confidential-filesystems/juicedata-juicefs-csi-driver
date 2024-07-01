@@ -31,6 +31,6 @@ func CfsRegister(mgr manager.Manager, client *k8sclient.K8sClient) {
 	serviceConf := &commonConfig.ServiceConfig{
 		ResourceServerUrl: config.ResourceServerUrl,
 	}
-	server.Register(CfsPvcCredentialPath, commonWebhook.NewPvcCredentialHandler(webhookConf, serviceConf, client, eventRecorder, nil))
+	server.Register(CfsPvcCredentialPath, commonWebhook.NewPvcCredentialHandler(webhookConf, serviceConf, client, eventRecorder, nil, false))
 	klog.Infof("Registered webhook handler path %s for pvc credential", CfsPvcCredentialPath)
 }

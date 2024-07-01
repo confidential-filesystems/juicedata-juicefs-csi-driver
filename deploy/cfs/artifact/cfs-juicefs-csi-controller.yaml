@@ -25,6 +25,7 @@ spec:
         app.kubernetes.io/instance: cfs-juicefs-csi-driver
         app.kubernetes.io/name: cfs-juicefs-csi-driver
         app.kubernetes.io/version: master
+        disable.sidecar.csi.confidentialfilesystems.com/inject: "true"
     spec:
       runtimeClassName: kata-qemu-controller
       containers:

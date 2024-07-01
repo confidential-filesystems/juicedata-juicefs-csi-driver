@@ -22,6 +22,7 @@ echo "Applying rbac:"
 sed "s/NAMESPACE/$K8S_NAMESPACE/" ./artifact/cfs-juicefs-csi-rbac.yaml  > ./artifact/tmp-cfs-juicefs-csi-rbac.yaml
 kubectl apply -f ./artifact/tmp-cfs-juicefs-csi-rbac.yaml -n $K8S_NAMESPACE
 echo "Applying controller:"
+kubectl delete -f ./artifact/cfs-juicefs-csi-controller.yaml --ignore-not-found -n $K8S_NAMESPACE
 kubectl apply -f ./artifact/cfs-juicefs-csi-controller.yaml -n $K8S_NAMESPACE
 
 echo "Applying webhook:"
