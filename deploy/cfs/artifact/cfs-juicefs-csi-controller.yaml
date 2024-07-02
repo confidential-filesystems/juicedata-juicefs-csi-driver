@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/version: master
   name: cfs-juicefs-csi-controller
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: cfs-juicefs-csi-controller
@@ -56,10 +56,10 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: CSI_CONTROLLER_WORKLOAD_SIDECAR_IMAGE
-              value: hub.confidentialfilesystems.com:4443/cc/juicefs:v1.1.2-d3
+              value: hub.confidentialfilesystems.com:4443/cc/cfs-fuse:v0.0.1-d1
             - name: CSI_CONTROLLER_WORKLOAD_INIT_IMAGE
               value: hub.confidentialfilesystems.com:4443/cc/busybox:1.36.1
-          image: hub.confidentialfilesystems.com:4443/cc/cfs-juicefs-csi-controller:v0.0.1-d4
+          image: hub.confidentialfilesystems.com:4443/cc/juicefs-csi-driver:v0.0.1-d1
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 5
