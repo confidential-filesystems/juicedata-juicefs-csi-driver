@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"

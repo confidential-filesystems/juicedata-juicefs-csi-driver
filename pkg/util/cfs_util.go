@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	cfsCert "github.com/confidential-filesystems/filesystem-toolchain/cert"
 	"github.com/confidential-filesystems/filesystem-toolchain/resource"
 	"github.com/confidential-filesystems/filesystem-toolchain/util"

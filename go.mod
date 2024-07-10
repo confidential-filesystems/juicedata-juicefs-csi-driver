@@ -2,8 +2,8 @@ module github.com/juicedata/juicefs-csi-driver
 
 require (
 	github.com/agiledragon/gomonkey/v2 v2.9.0
-	github.com/confidential-filesystems/csi-driver-common v0.0.0-20240607095517-2fa5b124bfa3
-	github.com/confidential-filesystems/filesystem-toolchain v0.0.1
+	github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240710063842-e154e0a024b9
+	github.com/confidential-filesystems/filesystem-toolchain v0.0.0-20240709110647-4fc1f387d075
 	github.com/container-storage-interface/spec v1.9.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.1
@@ -50,7 +50,9 @@ require (
 	github.com/Microsoft/hcsshim v0.12.0-rc.1 // indirect
 	github.com/OneOfOne/xxhash v1.2.8 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
+	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
 	github.com/ThalesIgnite/crypto11 v1.2.5 // indirect
+	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
@@ -65,6 +67,7 @@ require (
 	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
 	github.com/aliyun/credentials-go v1.3.1 // indirect
+	github.com/aristanetworks/goarista v0.0.0-20170210015632-ea17b1a17847 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.24.1 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.26.6 // indirect
@@ -85,7 +88,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.1.2 // indirect
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.0.1 // indirect
 	github.com/btcsuite/btcutil v1.0.3-0.20201208143702-a53e38424cce // indirect
 	github.com/buildkite/agent/v3 v3.62.0 // indirect
@@ -100,7 +102,7 @@ require (
 	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
-	github.com/confidential-filesystems/containers-skopeo-keyprovider v0.0.0-20240620094644-627f05ac867d // indirect
+	github.com/confidential-filesystems/filesystem-skopeo-keyprovider v0.0.0-20240709105048-5c2dbb26450d // indirect
 	github.com/containerd/cgroups/v3 v3.0.2 // indirect
 	github.com/containerd/containerd v1.7.12 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.15.1 // indirect
@@ -125,6 +127,7 @@ require (
 	github.com/docker/docker-credential-helpers v0.8.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
+	github.com/elastic/gosigar v0.8.1-0.20180330100440-37f05ff46ffa // indirect
 	github.com/emicklei/proto v1.12.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.17 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
@@ -136,6 +139,7 @@ require (
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-ole/go-ole v1.2.1 // indirect
 	github.com/go-openapi/analysis v0.22.0 // indirect
 	github.com/go-openapi/errors v0.21.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
@@ -150,6 +154,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.16.0 // indirect
+	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
@@ -256,6 +261,8 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.18.2 // indirect
 	github.com/spiffe/go-spiffe/v2 v2.1.7 // indirect
+	github.com/steakknife/bloomfilter v0.0.0-20180922174646-6819c0d2a570 // indirect
+	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3 // indirect
 	github.com/stefanberger/go-pkcs11uri v0.0.0-20201008174630-78d3cae3a980 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/sylabs/sif/v2 v2.15.0 // indirect
@@ -386,10 +393,6 @@ replace k8s.io/sample-controller => k8s.io/sample-controller v0.22.0
 
 replace k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20211115234752-e816edb12b65
 
-replace github.com/confidential-filesystems/filesystem-toolchain => ../filesystem-toolchain
-
 replace github.com/containers/skopeo v1.14.2 => github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087
 
-replace github.com/confidential-filesystems/csi-driver-common => ../csi-driver-common
-
-//go/pkg/mod/github.com/sigstore/cosign/v2@v2.2.3/cmd/cosign/cli/copy/copy.go need to update
+replace github.com/ethereum/go-ethereum v1.10.17 => github.com/ethereum/go-ethereum v1.9.9

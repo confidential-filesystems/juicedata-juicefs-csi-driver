@@ -29,7 +29,7 @@ import (
 	"k8s.io/klog"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
 	"github.com/juicedata/juicefs-csi-driver/cmd/app"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/driver"

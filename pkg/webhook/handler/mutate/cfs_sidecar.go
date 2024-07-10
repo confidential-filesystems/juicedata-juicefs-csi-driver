@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	"github.com/confidential-filesystems/filesystem-toolchain/resource"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/juicefs"

@@ -5,9 +5,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
-	commonWebhook "github.com/confidential-filesystems/csi-driver-common/service/webhook/pvc"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
+	commonWebhook "github.com/confidential-filesystems/filesystem-csi-driver-common/service/webhook/pvc"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"
 )

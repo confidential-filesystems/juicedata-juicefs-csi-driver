@@ -6,11 +6,11 @@ package driver
 
 import (
 	"context"
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
 	"net"
 	"time"
 
-	commonDriver "github.com/confidential-filesystems/csi-driver-common/service/driver"
+	commonDriver "github.com/confidential-filesystems/filesystem-csi-driver-common/service/driver"
 	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"

@@ -12,8 +12,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	utilpointer "k8s.io/utils/pointer"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util/security"

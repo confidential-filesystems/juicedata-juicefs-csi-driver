@@ -19,7 +19,7 @@ import (
 	"k8s.io/klog"
 	provisioncontroller "sigs.k8s.io/sig-storage-lib-external-provisioner/v6/controller"
 
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	k8s "github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util"

@@ -27,7 +27,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	commonConfig "github.com/confidential-filesystems/csi-driver-common/config"
+	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
 )
 
 var (

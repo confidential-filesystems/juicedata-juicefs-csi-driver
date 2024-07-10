@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"strconv"
 
-	commonUtil "github.com/confidential-filesystems/csi-driver-common/service/util"
+	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	"github.com/container-storage-interface/spec/lib/go/csi"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/k8sclient"
