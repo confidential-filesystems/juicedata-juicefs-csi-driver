@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -60,8 +61,17 @@ func parseControllerConfig() {
 	} else {
 		config.DriverName += commonConfig.DefaultProvisionerNameSuffix
 	}
-	if os.Getenv(commonConfig.EnvWorkloadRuntimeClassName) != "" {
-		config.WorkloadRuntimeClassName = os.Getenv(commonConfig.EnvWorkloadRuntimeClassName)
+	if os.Getenv(commonConfig.EnvWorkloadTeeRuntimeClassName) != "" {
+		classes := strings.Split(os.Getenv(commonConfig.EnvWorkloadTeeRuntimeClassName), ",")
+		if len(classes) > 0 {
+			config.WorkloadRuntimeClassNames.TEE = classes
+		}
+	}
+	if os.Getenv(commonConfig.EnvWorkloadVmRuntimeClassName) != "" {
+		classes := strings.Split(os.Getenv(commonConfig.EnvWorkloadVmRuntimeClassName), ",")
+		if len(classes) > 0 {
+			config.WorkloadRuntimeClassNames.VM = classes
+		}
 	}
 	if os.Getenv(commonConfig.EnvResourceServerUrl) != "" {
 		config.ResourceServerUrl = os.Getenv(commonConfig.EnvResourceServerUrl)

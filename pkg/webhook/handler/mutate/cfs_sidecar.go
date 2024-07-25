@@ -50,6 +50,7 @@ func (s *CfsSidecarMutate) Mutate(ctx context.Context, pod *corev1.Pod) (out *co
 		sideCarContainerNames []string
 		sideCarContainerName  = ""
 		sideCarFses           []*resource.Filesystem
+		expectRuntime         = commonConfig.RuntimeVm
 	)
 	// find expected signer
 	for _, pair := range s.Pair {
@@ -73,11 +74,22 @@ func (s *CfsSidecarMutate) Mutate(ctx context.Context, pod *corev1.Pod) (out *co
 		}
 		sideCarContainerNames = append(sideCarContainerNames, sideCarContainerName)
 		sideCarFses = append(sideCarFses, &pair.Filesystem)
+		if commonConfig.RuntimeTee == pair.Filesystem.GetRuntime() {
+			expectRuntime = commonConfig.RuntimeTee
+		}
 	}
-	commonUtil.InjectRuntimeHandlerAnnotation(out, config.WorkloadRuntimeClassName)
-	commonUtil.InjectRuntimeClass(out, config.WorkloadRuntimeClassName)
+	runtimeClass, err := commonUtil.GetRuntimeClass(pod, &config.WorkloadRuntimeClassNames, expectRuntime)
+	if err != nil {
+		klog.Errorf("get runtime class of pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
+		return nil, err
+	}
+	if err := commonUtil.InjectRuntimeClassAndAnnotation(out, &config.WorkloadRuntimeClassNames, runtimeClass); err != nil {
+		klog.Errorf("inject runtime class of pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
+		return nil, err
+	}
 	if err := commonUtil.InjectInitContainer(ctx, out, ivps, ikekKids, sideCarContainerNames, sideCarFses, true,
-		config.WorkloadInitImage, config.ResourceServerUrl, config.GetResourceAuthExpireInSeconds()); err != nil {
+		config.WorkloadInitImage, config.ResourceServerUrl, config.GetResourceAuthExpireInSeconds(),
+		&config.WorkloadRuntimeClassNames, runtimeClass); err != nil {
 		klog.Errorf("inject init container to pod %s namespace %s err: %v", pod.Name, pod.Namespace, err)
 		return nil, err
 	}
@@ -102,7 +114,7 @@ func (s *CfsSidecarMutate) mutate(ctx context.Context, pod *corev1.Pod, pair uti
 	jfsSetting.MountPath = filepath.Join(config.PodMountBase, mountPath)
 
 	jfsSetting.Attr.Namespace = pod.Namespace
-	jfsSetting.SecretName = pair.PVC.Name + "-cfs-secret"
+	jfsSetting.SecretName = pair.PVC.Name + "-secret"
 	s.jfsSetting = jfsSetting
 	capacity := pair.PVC.Spec.Resources.Requests.Storage().Value()
 	cap := capacity / 1024 / 1024 / 1024

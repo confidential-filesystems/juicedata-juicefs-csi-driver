@@ -2,7 +2,7 @@
 
 set -e
 SERVICE_NAME=juicefs-csi-driver
-VERSION=v0.0.1-d1
+VERSION=v0.0.1-d2
 HUB=hub.confidentialfilesystems.com:4443
 
 git pull

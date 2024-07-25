@@ -72,11 +72,14 @@ var (
 	DefaultClientConfPath = "/root/.juicefs"
 	ROConfPath            = "/etc/juicefs"
 
-	WorkloadRuntimeClassName = commonConfig.DefaultWorkLoadRuntimeClassName
-	ResourceServerUrl        = commonConfig.DefaultResourceServerUrl
-	FSManagerPort            = commonConfig.DefaultFsManagerPort
-	WorkloadInitImage        = "docker.io/library/busybox:latest"
-	WorkloadSideCarImage     = ""
+	WorkloadRuntimeClassNames = commonConfig.RuntimeClassNames{
+		TEE: []string{commonConfig.DefaultWorkLoadTeeRuntimeClassName},
+		VM:  []string{commonConfig.DefaultWorkLoadVmRuntimeClassName},
+	}
+	ResourceServerUrl    = commonConfig.DefaultResourceServerUrl
+	FSManagerPort        = commonConfig.DefaultFsManagerPort
+	WorkloadInitImage    = "docker.io/library/busybox:latest"
+	WorkloadSideCarImage = ""
 )
 
 const (

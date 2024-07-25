@@ -41,6 +41,11 @@ func (s *CfsSidecarHandler) Handle(ctx context.Context, request admission.Reques
 		pod = &corev1.Pod{}
 	)
 	defer func() {
+		defer func() {
+			if r := recover(); r != nil {
+				klog.Warningf("Recovered in CfsSidecarHandler eventf: %v", r)
+			}
+		}()
 		if err != nil && (pod.Name != "" || pod.GenerateName != "") {
 			var eventTarget runtime.Object = pod
 			if owner, _ := commonUtil.GetFirstRuntimeObjectOwner(ctx, s.Client, pod); owner != nil {
