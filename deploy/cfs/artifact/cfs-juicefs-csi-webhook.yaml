@@ -79,7 +79,7 @@ spec:
   ports:
     - name: https-rest
       port: 443
-      targetPort: 33031
+      targetPort: 8443
   selector:
     app: cfs-juicefs-csi-controller
     app.kubernetes.io/instance: cfs-juicefs-csi-driver

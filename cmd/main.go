@@ -72,7 +72,7 @@ func main() {
 	cmd.Flags().BoolVar(&cacheConf, "cache-client-conf", false, "Cache client config file. default false.")
 	cmd.Flags().BoolVar(&webhook, "webhook", true, "Enable mutating webhook in controller for sidecar mode. default true.")
 	cmd.Flags().StringVar(&certDir, "webhook-cert-dir", "/etc/webhook/certs", "Admission webhook cert/key dir.")
-	cmd.Flags().IntVar(&webhookPort, "webhook-port", 33031, "Admission webhook port.")
+	cmd.Flags().IntVar(&webhookPort, "webhook-port", 8443, "Admission webhook port.")
 	cmd.Flags().BoolVar(&validationWebhook, "validating-webhook", false, "Enable validation webhook in controller. default false.")
 
 	// node flags
