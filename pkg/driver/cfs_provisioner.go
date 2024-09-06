@@ -151,6 +151,9 @@ func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.Persi
 			Name:      volume.Spec.ClaimRef.Name,
 			Namespace: volume.Spec.ClaimRef.Namespace,
 		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			StorageClassName: &volume.Spec.StorageClassName,
+		},
 	}
 	addr, cred, err := commonUtil.CheckPvcCredential(ctx, j.K8sClient, pvc, admissionv1.Delete, "", config.ResourceServerUrl)
 	if err != nil {
