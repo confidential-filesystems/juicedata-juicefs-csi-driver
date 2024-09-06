@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
-	cfsCert "github.com/confidential-filesystems/filesystem-toolchain/cert"
 	"github.com/confidential-filesystems/filesystem-toolchain/resource"
 	"github.com/confidential-filesystems/filesystem-toolchain/util"
 	"github.com/go-resty/resty/v2"
@@ -32,7 +31,7 @@ func OperateFs(ctx context.Context, cfspec *commonUtil.CfSpec, ownerAddr, action
 		klog.Infof("failed to get client certs of %s: %v", ownerAddr, err)
 		return
 	}
-	client, err := util.NewRestyClientWithCert(ca, cert, key, cfsCert.DefaultServerCommonName)
+	client, err := util.NewRestyClientWithCert(ca, cert, key, cfspec.Spec.Filesystem.Name)
 	if err != nil {
 		klog.Infof("failed to new resty client with cert: %v", err)
 		return
