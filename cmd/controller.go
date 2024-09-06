@@ -25,6 +25,7 @@ import (
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/klog"
@@ -91,6 +92,30 @@ func parseControllerConfig() {
 	if config.WorkloadSideCarImage == "" {
 		klog.Error("no workload sidecar image setting")
 		os.Exit(0)
+	}
+	cpu := os.Getenv("CSI_CONTROLLER_WORKLOAD_SIDECAR_LIMITS_CPU")
+	if cpu != "" {
+		if _, err := resource.ParseQuantity(cpu); err == nil {
+			config.DefaultMountPodCpuLimit = cpu
+		}
+	}
+	cpu = os.Getenv("CSI_CONTROLLER_WORKLOAD_SIDECAR_REQUESTS_CPU")
+	if cpu != "" {
+		if _, err := resource.ParseQuantity(cpu); err == nil {
+			config.DefaultMountPodCpuRequest = cpu
+		}
+	}
+	memory := os.Getenv("CSI_CONTROLLER_WORKLOAD_SIDECAR_LIMITS_MEMORY")
+	if cpu != "" {
+		if _, err := resource.ParseQuantity(memory); err == nil {
+			config.DefaultMountPodMemLimit = memory
+		}
+	}
+	memory = os.Getenv("CSI_CONTROLLER_WORKLOAD_SIDECAR_REQUESTS_MEMORY")
+	if memory != "" {
+		if _, err := resource.ParseQuantity(memory); err == nil {
+			config.DefaultMountPodMemRequest = memory
+		}
 	}
 	config.PodName = os.Getenv("POD_NAME")
 	if config.PodName == "" {

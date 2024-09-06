@@ -80,6 +80,12 @@ var (
 	FSManagerPort        = commonConfig.DefaultFsManagerPort
 	WorkloadInitImage    = "docker.io/library/busybox:latest"
 	WorkloadSideCarImage = ""
+
+	// default value
+	DefaultMountPodCpuLimit   = "1000m"
+	DefaultMountPodMemLimit   = "1Gi"
+	DefaultMountPodCpuRequest = "100m"
+	DefaultMountPodMemRequest = "100Mi"
 )
 
 const (
@@ -137,12 +143,6 @@ const (
 	// DeleteDelayTimeKey mount pod annotation
 	DeleteDelayTimeKey = "juicefs-delete-delay"
 	DeleteDelayAtKey   = "juicefs-delete-at"
-
-	// default value
-	DefaultMountPodCpuLimit   = "2000m"
-	DefaultMountPodMemLimit   = "5Gi"
-	DefaultMountPodCpuRequest = "1000m"
-	DefaultMountPodMemRequest = "1Gi"
 
 	CfsName = "confidentialfilesystems"
 )

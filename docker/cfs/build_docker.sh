@@ -3,7 +3,7 @@
 set -e
 SERVICE_NAME=juicefs-csi-driver
 TAG_NAME=juicedata-juicefs-csi-driver
-VERSION=v0.23.4-filesystem-d3
+VERSION=v0.23.4-filesystem-d4
 HUB=hub.confidentialfilesystems.com:30443
 
 git pull
