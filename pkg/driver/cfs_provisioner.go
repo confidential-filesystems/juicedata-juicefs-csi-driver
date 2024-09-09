@@ -184,7 +184,9 @@ func (j *cfsProvisionerService) Delete(ctx context.Context, volume *corev1.Persi
 	if err != nil {
 		return fmt.Errorf("fail to get cfspec %s, err: %s", cfsSpecName, err)
 	}
-	if err := util.OperateFs(ctx, cfspec, addr, cred, admissionv1.Delete); err != nil {
+	subCtx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+	if err := util.OperateFs(subCtx, cfspec, addr, cred, admissionv1.Delete); err != nil {
 		return fmt.Errorf("unable to provision delete volume: fail to delete fs %s with subpath %s, err: %s", cfsSpecName, pvc.Name, err)
 	}
 
