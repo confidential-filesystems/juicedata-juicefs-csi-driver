@@ -10,8 +10,9 @@ RUN apt-get update && apt-get install -y btrfs-progs libbtrfs-dev libdevmapper-d
 
 WORKDIR /usr/src
 COPY . juicedata-juicefs-csi-driver
-RUN --mount=type=ssh cd juicedata-juicefs-csi-driver && go mod download && \
-    GOOS=linux GOARCH=amd64 go build -o juicefs-csi-driver ./cmd
+RUN --mount=type=ssh cd juicedata-juicefs-csi-driver && go mod download
+COPY docker/cfs/copy.go_ /go/pkg/mod/github.com/sigstore/cosign/v2@v2.2.3/cmd/cosign/cli/copy/copy.go
+RUN --mount=type=ssh cd juicedata-juicefs-csi-driver && GOOS=linux GOARCH=amd64 go build -o juicefs-csi-driver ./cmd
 
 FROM gcr.io/distroless/base-debian12
 
