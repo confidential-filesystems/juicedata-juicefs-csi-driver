@@ -2,7 +2,7 @@ module github.com/juicedata/juicefs-csi-driver
 
 require (
 	github.com/agiledragon/gomonkey/v2 v2.9.0
-	github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240918025625-3db10c066ed2
+	github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240919074233-6b031a47aa35
 	github.com/confidential-filesystems/filesystem-toolchain v0.0.0-20240725054559-c8adf51ac659
 	github.com/container-storage-interface/spec v1.9.0
 	github.com/gin-contrib/cors v1.4.0

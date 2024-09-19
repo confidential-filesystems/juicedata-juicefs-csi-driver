@@ -348,8 +348,8 @@ github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be h1:J5BL
 github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be/go.mod h1:mk5IQ+Y0ZeO87b858TlA645sVcEcbiX6YqP98kt+7+w=
 github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087 h1:P5MmoM3VzjgHK6E5Xu463baO0L6RbkbCjB9LDSP1Huo=
 github.com/confidential-filesystems/containers-skopeo v1.14.3-0.20240620101228-3d3d33f1b087/go.mod h1:CnnAB6RUXmL0BWpFIQUcGYDPCSAH9XWkmttXg17Ma7U=
-github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240918025625-3db10c066ed2 h1:oiWWLamy8VMIsbATz+UrgKVBxymNGxzIjm8gHFyPPNE=
-github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240918025625-3db10c066ed2/go.mod h1:lFG7h1iM2VtJW7ziBuTJGhHYxSLA+/78fvGveaPJKms=
+github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240919074233-6b031a47aa35 h1:CgAEuY2Ty6RusDT47UOdYxdkwEiJR11/NCM543XpzcI=
+github.com/confidential-filesystems/filesystem-csi-driver-common v0.0.0-20240919074233-6b031a47aa35/go.mod h1:lFG7h1iM2VtJW7ziBuTJGhHYxSLA+/78fvGveaPJKms=
 github.com/confidential-filesystems/filesystem-skopeo-keyprovider v0.0.0-20240709105048-5c2dbb26450d h1:wheRq8IoPZp2JjNL8uAE2kaNKO0OkjLck39+S9EIC54=
 github.com/confidential-filesystems/filesystem-skopeo-keyprovider v0.0.0-20240709105048-5c2dbb26450d/go.mod h1:55zSwr0D1kJr9ZIfL9FUA/keojyiZZnkQVh+EgwI2ZM=
 github.com/confidential-filesystems/filesystem-toolchain v0.0.0-20240725054559-c8adf51ac659 h1:eOhlDG4ZgKjqKibOrcUM9/mJ4wZtSxfPncW3V4NMyAM=
