@@ -9,14 +9,12 @@ import (
 	"strconv"
 	"strings"
 
-	corev1 "k8s.io/api/core/v1"
-	utilpointer "k8s.io/utils/pointer"
-
 	commonConfig "github.com/confidential-filesystems/filesystem-csi-driver-common/config"
 	commonUtil "github.com/confidential-filesystems/filesystem-csi-driver-common/service/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/config"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util"
 	"github.com/juicedata/juicefs-csi-driver/pkg/util/security"
+	corev1 "k8s.io/api/core/v1"
 )
 
 type CfsContainerBuilder struct {
@@ -68,7 +66,7 @@ func (r *CfsContainerBuilder) NewMountSidecar(pair *util.PVPair) *corev1.Pod {
 				capacity,
 				community,
 				security.EscapeBashStr(quotaPath),
-				checkMountScriptPath,
+				checkMountScriptName,
 				security.EscapeBashStr(r.jfsSetting.MountPath),
 			)}},
 	}
@@ -101,18 +99,7 @@ func (r *CfsContainerBuilder) OverwriteVolumes(volume *corev1.Volume, mountPath 
 // genSidecarVolumes generates volumes and volumeMounts for sidecar container
 // extra volumes and volumeMounts are used to check mount status
 func (r *CfsContainerBuilder) genSidecarVolumes(pair *util.PVPair) (volumes []corev1.Volume, volumeMounts []corev1.VolumeMount) {
-	var mode int32 = 0755
-	secretName := r.jfsSetting.SecretName
 	volumes = []corev1.Volume{
-		{
-			Name: "cfs-check-mount",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName:  secretName,
-					DefaultMode: utilpointer.Int32Ptr(mode),
-				},
-			},
-		},
 		{
 			Name: commonConfig.ContainerSideCarDummyConfVolumeName,
 			VolumeSource: corev1.VolumeSource{
@@ -122,11 +109,6 @@ func (r *CfsContainerBuilder) genSidecarVolumes(pair *util.PVPair) (volumes []co
 			},
 		}}
 	volumeMounts = []corev1.VolumeMount{
-		{
-			Name:      "cfs-check-mount",
-			MountPath: checkMountScriptPath,
-			SubPath:   checkMountScriptName,
-		},
 		{
 			Name:      commonConfig.ContainerSideCarDummyConfVolumeName,
 			MountPath: "/etc/cfs/conf",

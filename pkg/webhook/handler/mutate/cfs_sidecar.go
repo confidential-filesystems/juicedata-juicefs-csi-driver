@@ -125,11 +125,11 @@ func (s *CfsSidecarMutate) mutate(ctx context.Context, pod *corev1.Pod, pair uti
 	r := builder.NewCfsContainerBuilder(jfsSetting, cap)
 
 	// create secret per PVC
-	secret := builder.NewSecret(jfsSetting.Attr.Namespace, jfsSetting.SecretName)
-	builder.SetPVCAsOwner(&secret, pair.PVC)
-	if err = s.createOrUpdateSecret(ctx, &secret); err != nil {
-		return
-	}
+	//secret := builder.NewSecret(jfsSetting.Attr.Namespace, jfsSetting.SecretName)
+	//builder.SetPVCAsOwner(&secret, pair.PVC)
+	//if err = s.createOrUpdateSecret(ctx, &secret); err != nil {
+	//	return
+	//}
 
 	// gen mount pod
 	mountPod := r.NewMountSidecar(&pair)
